@@ -37,21 +37,23 @@ function sbmUser() {
     if (user_msg != '') {
         sendMsg(user_msg, 'user');
         document.getElementById('sbm').value = "";
+
+        const obj = { msg: user_msg };
+        const method = "POST";
+        const body = Object.keys(obj).reduce((o, key) => (o.set(key, obj[key]), o), new FormData());
+        const headers = {
+            'Accept': 'application/json'
+        };
+        fetch("http://localhost:8000/msg", {
+            method, mode: 'cors', headers, body
+        }).then((res) => res.json())
+            .then(function (res) {
+                console.log(res.msg);
+                sendSystem(res.msg);
+            })
+            .catch(console.error);
     }
-    const obj = { msg: user_msg };
-    const method = "POST";
-    const body = Object.keys(obj).reduce((o, key) => (o.set(key, obj[key]), o), new FormData());
-    const headers = {
-        'Accept': 'application/json'
-    };
-    fetch("http://localhost:8000/msg", {
-        method, mode: 'cors', headers, body
-    }).then((res) => res.json())
-        .then(function (res) {
-            console.log(res.msg);
-            sendSystem(res.msg);
-        })
-        .catch(console.error);
+
 }
 
 // システム側送信
