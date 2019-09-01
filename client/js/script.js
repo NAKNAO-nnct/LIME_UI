@@ -31,22 +31,36 @@ function sendMsg(msg, speaker) {
 }
 
 
-// user input
+// user 送信
 function sbmUser() {
     var user_msg = document.getElementById('sbm').value;
     if (user_msg != '') {
         sendMsg(user_msg, 'user');
         document.getElementById('sbm').value = "";
     }
+    const obj = { msg: user_msg };
+    const method = "POST";
+    const body = Object.keys(obj).reduce((o, key) => (o.set(key, obj[key]), o), new FormData());
+    const headers = {
+        'Accept': 'application/json'
+    };
+    fetch("http://localhost:8000/msg", {
+        method, mode: 'cors', headers, body
+    }).then((res) => res.json())
+        .then(function (res) {
+            console.log(res.msg);
+            sendSystem(res.msg);
+        })
+        .catch(console.error);
 }
 
-function sendSystem() {
-    var msg = "";
+// システム側送信
+function sendSystem(msg) {
     sendMsg(msg, 'system');
 }
 
 
-
+// enterキー操作
 window.onkeydown = function (event) {
     var e = window.event;
 
